@@ -5,7 +5,7 @@ var userRouter = require('express').Router();
 var jwt_secret = require('../config').JWT_SECRET;
 var express_jwt = require('express-jwt');
 
-var User = mongoose.model('UserModel');
+var User = mongoose.model('UsuarioModel');
 
 
 userRouter.post('/', function(req, res, next) {

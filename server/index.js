@@ -12,7 +12,7 @@ var models = require('./models');
 var config = require('./config');
 
 // Conectamos a la BD
-mongoose.connect(config.db_path);
+mongoose.connect(config.DB_URI);
 
 // Inicializamos los modelos
 models.initialize();
