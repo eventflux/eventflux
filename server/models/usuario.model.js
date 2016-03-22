@@ -3,10 +3,12 @@ var Schema = mongoose.Schema;
 
 module.exports = function() {
   var usuarioModelSchema = new Schema({
-	correo: {type: String, require: true},
+	email: {type: String, require: true},
 	nombre: {type: String, require: true},
     apellidos: String,
-    contraseña: {type: String, require: true}
+    password: {type: String, require: true},
+    edad: Number,
+    reputacion: { type: Number, min: 0, max: 100 }
   });
 
   mongoose.model('UsuarioModel', usuarioModelSchema, 'usuarioModel');
