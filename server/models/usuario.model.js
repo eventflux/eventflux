@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 module.exports = function() {
   var usuarioModelSchema = new Schema({
-	email: {type: String, require: true},
+	email: {type: String, require: true, unique: true, index: true},
 	nombre: {type: String, require: true},
     apellidos: String,
     password: {type: String, require: true},
