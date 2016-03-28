@@ -34,11 +34,13 @@ router.post('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre q
 // que pueda desencriptar el token y comprobar que es correcto
 // Como especificamos requestProperty: 'usuario' en req.usuario tendremos
 // la info del usuario desencriptada
-router.use(express_jwt({ secret: config.JWT_SECRET, requestProperty: 'usuario' }));
+router.use(express_jwt({ secret: config.JWT_SECRET, requestProperty: 'user' }));
 
 // Crear evento
 router.post('/newEvent', function(req, res) {
     var eventoInstance = new EventoModel(req.body);
+    console.log("nombre->"+req.user.nombre);
+    console.log("email->"+req.user.email);
     UsuarioModel.findOne({email: req.user.email}, function(err, infoUser) {
          if (err) res.status(500).send(err);
          else {
