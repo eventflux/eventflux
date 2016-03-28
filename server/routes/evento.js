@@ -15,15 +15,15 @@ var UsuarioModel = mongoose.model('UsuarioModel');
 
  // Obtener lista eventos
 router.get('/listaEventos', function(req, res) {
-    EventModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
+    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
         if (err) res.status(500).json(err);
         else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON
     });
 });
 
 // Obtener usuario
-router.get('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre que se identifica por titulo-fecha
-    EventModel.findOne({ titulo: req.params.titulo, fecha: req.params.fecha}, function(err, evento) {
+router.post('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre que se identifica por titulo-fecha
+    EventoModel.findOne({ titulo: req.params.titulo, fecha: req.params.fecha}, function(err, evento) {
         if (err) res.status(500).json(err);
         else res.status(200).json(evento);
     });
@@ -47,7 +47,7 @@ router.post('/newEvent', function(req, res) {
                 if (err) {
                     res.status(500).send(err);
                 } else {
-                    else res.status(200).json({ evento: newEvento });
+                    res.status(200).json({ evento: newEvento });
                 }
             });
          }
