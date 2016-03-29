@@ -17,7 +17,13 @@ var winston = require('winston');
 
 module.exports = {
     PORT: 8080,
-    DB_URI: "mongodb://heroku_hrdhj7jd:71n7l8um6bjf4nc03jf5sdh464@ds013589.mlab.com:13589/heroku_hrdhj7jd",
+
+    //HEROKU
+    //DB_URI: "mongodb://heroku_hrdhj7jd:71n7l8um6bjf4nc03jf5sdh464@ds013589.mlab.com:13589/heroku_hrdhj7jd",
+    
+    //LOCAL
+    DB_URI: "mongodb://localhost/eventflux",
+
     WINSTON_LOGGER_OPTS: {
         transports: [
             new winston.transports.Console({

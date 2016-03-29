@@ -1,4 +1,4 @@
-var models = [ './modelo_user'];
+var models = [ './evento.model', './usuario.model'];
 
 /**
  Funcion para inicializar los modulos, basado en el array definido arriba 

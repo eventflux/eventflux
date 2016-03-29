@@ -26,9 +26,13 @@ app.use(bodyParser.json());
 
 // del recurso 'users'
 var registerRouter = require('./routes/register');
+var loginRouter = require('./routes/login');
+var eventoRouter = require('./routes/evento');
 
 // Y los usamos para los caminos que toquen
 app.use('/register',  registerRouter);
+app.use('/login',  loginRouter);
+app.use('/evento',  eventoRouter);
 
 http.createServer(app).listen(8080);
 

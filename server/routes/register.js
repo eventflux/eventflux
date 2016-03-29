@@ -5,14 +5,14 @@ var userRouter = require('express').Router();
 var jwt_secret = require('../config').JWT_SECRET;
 var express_jwt = require('express-jwt');
 
-var User = mongoose.model('UserModel');
+var User = mongoose.model('UsuarioModel');
 
 
 userRouter.post('/', function(req, res, next) {
 
     // Comprobamos que nos ha indicado una contraseña y username
-    if (!req.body.name || !req.body.password || !req.body.email) {
-        res.status(500).send("You have to write your email, password and username");
+    if (!req.body.nombre || !req.body.password || !req.body.email) {
+        res.status(500).send("Tiene que escribir un nombre, un password y un email");
         return;
     }
 
