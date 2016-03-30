@@ -11,8 +11,19 @@ var models = require('./models');
 // config.js es un fichero con constantes
 var config = require('./config');
 
+var uristring = 
+  process.env.MONGOLAB_URI || 
+  process.env.MONGOHQ_URL || 
+  'mongodb://localhost/eventflux'
+
 // Conectamos a la BD
-mongoose.connect(config.DB_URI);
+mongoose.connect(uristring, function (err, res) {
+  if (err) { 
+    console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+  } else {
+    console.log ('Succeeded connected to: ' + uristring);
+  }
+});
 
 // Inicializamos los modelos
 models.initialize();
@@ -34,7 +45,9 @@ app.use('/register',  registerRouter);
 app.use('/login',  loginRouter);
 app.use('/evento',  eventoRouter);
 
-http.createServer(app).listen(8080);
+var theport = process.env.PORT || 8080;
+
+http.createServer(app).listen(theport);
 
 
 

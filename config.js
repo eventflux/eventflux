@@ -19,7 +19,7 @@ module.exports = {
     PORT: 8080,
 
     //HEROKU
-    DB_URI: "mongodb://heroku_hrdhj7jd:71n7l8um6bjf4nc03jf5sdh464@ds013589.mlab.com:13589/heroku_hrdhj7jd",
+    //DB_URI: process.env.MONGOLAB_URI,
     
     //LOCAL
     //DB_URI: "mongodb://localhost/eventflux",

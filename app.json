@@ -1,0 +1,8 @@
+{
+  "name": "eventflux",
+  "description": "MongoDB with Mongoose on Node.js API",
+  "image": "heroku/nodejs",
+  "repository": "https://github.com/eventflux/eventflux.git",
+  "keywords": ["node", "mongoose", "ODM"],
+  "addons": ["mongolab"]
+}
