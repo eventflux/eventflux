@@ -21,9 +21,9 @@ router.get('/listaEventos', function(req, res) {
     });
 });
 
-// Obtener usuario
-router.post('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre que se identifica por titulo-fecha
-    EventoModel.findOne({ titulo: req.params.titulo, fecha: req.params.fecha}, function(err, evento) {
+// Obtener evento
+router.get('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre que se identifica por titulo-fecha
+    EventoModel.findOne({ titulo: req.params.titulo/*, fecha: req.params.fecha*/}, function(err, evento) {
         if (err) res.status(500).json(err);
         else res.status(200).json(evento);
     });
