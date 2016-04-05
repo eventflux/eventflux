@@ -7,7 +7,7 @@ module.exports = function() {
   	descripcion: String, //{type: String, require: true} no lo haria required, algun evento puede que no necesite
   	fecha: {type: String, require: true},
   	estado: {type: String, default: "Pendiente"},
-  	organizador: {type: Schema.Types.ObjectId, ref: "UsuarioModel"}, //en principio solo tiene un organizador cada evento
+  	organizador: {type: String, require: true}, //en principio solo tiene un organizador cada evento
   	ubicacion: {type: String, require: true}
   });
 

@@ -8,7 +8,8 @@ module.exports = function() {
     apellidos: String,
     password: {type: String, require: true},
     edad: Number,
-    reputacion: { type: Number, min: 0, max: 100 }
+    reputacion: { type: Number, min: 0, max: 100 },
+    eventos: [{type: Schema.Types.ObjectId, ref: 'EventoModel', default:[]}]
   });
 
   mongoose.model('UsuarioModel', usuarioModelSchema, 'usuarioModel');

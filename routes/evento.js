@@ -22,8 +22,8 @@ router.get('/listaEventos', function(req, res) {
 });
 
 // Obtener evento
-router.get('/consultarEvento/:titulo/:fecha', function(req, res) { //supondre que se identifica por titulo-fecha
-    EventoModel.findOne({ titulo: req.params.titulo/*, fecha: req.params.fecha*/}, function(err, evento) {
+router.get('/consultarEvento/:ubicacion/:fecha', function(req, res) { //supondre que se identifica por ubicacion-fecha
+    EventoModel.findOne({ ubicacion: req.params.ubicacion/*, fecha: req.params.fecha*/}, function(err, evento) {
         if (err) res.status(500).json(err);
         else res.status(200).json(evento);
     });
@@ -39,22 +39,29 @@ router.use(express_jwt({ secret: config.JWT_SECRET, requestProperty: 'user' }));
 // Crear evento
 router.post('/newEvent', function(req, res) {
     var eventoInstance = new EventoModel(req.body);
-    console.log("nombre->"+req.user.nombre);
-    console.log("email->"+req.user.email);
-    UsuarioModel.findOne({email: req.user.email}, function(err, infoUser) {
-         if (err) res.status(500).send(err);
-         else {
-            eventoInstance.organizador = infoUser._id;
-            eventoInstance.save(function(err, newEvento) {
+    eventoInstance.organizador = req.user.email;
+    eventoInstance.save(function(err, newEvento) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            var query = {email: req.user.email};
+            var update = { $push: { eventos: newEvento._id } };
+
+            // Indica que queremos que el objeto que nos devuelva la callback (updated)
+            // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
+            // Si no lo ponemos por defecto nos pone el viejo
+            var options = { 'new': true };
+
+            UsuarioModel.findOneAndUpdate(query, update, options, function(err, updated) {
                 if (err) {
-                    res.status(500).send(err);
-                } else {
-                    res.status(200).json({ evento: newEvento });
+                    res.status(500).json(err);
+                }
+                else {
+                    res.status(200).json(updated);
                 }
             });
-         }
+        }
     });
-
 });
 
 // Si no ha entrado en ninguna ruta anterior, error 404 not found
