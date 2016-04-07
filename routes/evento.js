@@ -38,29 +38,36 @@ router.use(express_jwt({ secret: config.JWT_SECRET, requestProperty: 'user' }));
 
 // Crear evento
 router.post('/newEvent', function(req, res) {
-    var eventoInstance = new EventoModel(req.body);
-    eventoInstance.organizador = req.user.email;
-    eventoInstance.save(function(err, newEvento) {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            var query = {email: req.user.email};
-            var update = { $push: { eventos: newEvento._id } };
-
-            // Indica que queremos que el objeto que nos devuelva la callback (updated)
-            // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
-            // Si no lo ponemos por defecto nos pone el viejo
-            var options = { 'new': true };
-
-            UsuarioModel.findOneAndUpdate(query, update, options, function(err, updated) {
+    EventoModel.findOne({ ubicacion: req.body.ubicacion, fecha: req.body.fecha}, function(err, evento) {
+        if (err) res.status(500).json(err);
+        if (evento != null) res.status(404).json("Ya existe un evento con esta ubicacion y fecha");
+        else {
+            var eventoInstance = new EventoModel(req.body);
+            eventoInstance.organizador = req.user.email;
+            eventoInstance.save(function(err, newEvento) {
                 if (err) {
-                    res.status(500).json(err);
-                }
-                else {
-                    res.status(200).json(updated);
+                    res.status(500).send(err);
+                } else {
+                    var query = {email: req.user.email};
+                    var update = { $push: { eventos: newEvento._id } };
+
+                    // Indica que queremos que el objeto que nos devuelva la callback (updated)
+                    // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
+                    // Si no lo ponemos por defecto nos pone el viejo
+                    var options = { 'new': true };
+
+                    UsuarioModel.findOneAndUpdate(query, update, options, function(err, updated) {
+                        if (err) {
+                            res.status(500).json(err);
+                        }
+                        else {
+                            res.status(200).json(updated);
+                        }
+                    });
                 }
             });
         }
+
     });
 });
 

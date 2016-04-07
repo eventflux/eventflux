@@ -11,5 +11,7 @@ module.exports = function() {
   	ubicacion: {type: String, require: true}
   });
 
+  eventoModelSchema.index({ ubicacion: 1, fecha: 1}, { unique: true });
+
   mongoose.model('EventoModel', eventoModelSchema, 'eventoModel');
 };
