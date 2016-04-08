@@ -17,13 +17,13 @@ userRouter.post('/', function(req, res, next) {
     }
 
     bcrypt.hash(req.body.password, 12, function(err, contraseña_encriptada) {
-        if (err) res.status(500).json(err);
+        if (err) res.status(502).json(err);
         //guardem password encrpt.
         console.log("Contraseña encriptada: "+contraseña_encriptada);
         var user = new User(req.body);
         user.password = contraseña_encriptada;
         user.save(function(err, savedUser) {
-            if (err) res.status(500).send(err);
+            if (err) res.status(503).send(err);
             else {
                 // No queremos enviar el password de vuelta al cliente
                 // Para ello hay que hacer un toObject y un delete
