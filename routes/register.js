@@ -12,7 +12,7 @@ userRouter.post('/', function(req, res, next) {
 
     // Comprobamos que nos ha indicado una contraseña y username
     if (!req.body.nombre || !req.body.password || !req.body.email) {
-        res.status(500).send("Tiene que escribir un nombre, un password y un email");
+        res.status(501).send("Tiene que escribir un nombre, un password y un email");
         return;
     }
 
