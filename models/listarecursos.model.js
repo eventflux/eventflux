@@ -2,15 +2,22 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 module.exports = function() {
-  var recursosModelSchema = new Schema({
-  	nombre: {type: String, require: true},
-  	cantidad: String,
-  	recompensa: String,
-  	solicitudes: [{type: Schema.Types.ObjectId, ref: 'EventoModel', default:[]}],
-  	evento: {type: String, require: true},
-  });
+  var recursosModelSchema = new Schema([
+	{
+  		nombre: {type: String, require: true},
+	  	cantidad: Number,
+	  	recompensa: String,
+	  	solicitudes: [{
+	  		idUsuario: {type: Schema.Types.ObjectId, ref: 'EventoModel', default:[]},
+	  		cantidad: Number,
+	  		aceptado: {Boolean, default: false}
+	  	}],
+	  	eventoID: {type: Schema.Types.ObjectId, ref: 'EventoModel'}
+  	}
+  ]);
 
-  eventoModelSchema.index({ nombre: 1, evento: 1}, { unique: true });
+  recursosModelSchema.index({ nombre: 1, eventoID: 1}, { unique: true });
 
-  mongoose.model('ListaRecursosModel', eventoModelSchema, 'listaRecursosModel');
+
+  mongoose.model('ListaRecursosModel', recursosModelSchema, 'listaRecursosModel');
 };

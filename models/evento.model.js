@@ -12,10 +12,13 @@ module.exports = function() {
   	estado: {type: String, default: "Pendiente"},
   	organizador: {type: String, require: true}, //en principio solo tiene un organizador cada evento
   	ubicacion: {type: String, require: true},
-    foto: String
+    foto: String,
+    listaRecursos: {type: Schema.Types.ObjectId, ref: 'ListaRecursosModel'}
   });
 
-  eventoModelSchema.index({ ubicacion: 1, fecha: 1}, { unique: true });
+  eventoModelSchema.index({ ubicacion: 1, fechaIni: 1}, { unique: true });
 
   mongoose.model('EventoModel', eventoModelSchema, 'eventoModel');
 };
+
+//tendremos que mirar por codigo que fechaIni<=fecha<=fechaFin devuelve false
