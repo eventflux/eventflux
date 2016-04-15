@@ -94,6 +94,8 @@ router.post('/newEvent', function(req, res) {
 
 router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     var listaRecursosNueva = req.body;
+    if(!listaRecursosNueva.length) res.status(510).json("Debes introducir una lista. Aunque solo haya un recurso por añadir");
+    
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
         if (err) res.status(500).json(err);
         else {
@@ -131,6 +133,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
 
 
                     for (var k = 0; k < listaRecursosActual.length; k++) {
+
                         //actualizamos todas los recursos
                         ListaRecursosModel.findOne({_id: listaRecursosActual[k]._id}, function(err, recurso) {
                             if (err) res.status(500).json(err);
@@ -182,6 +185,20 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     });
 });
 
+
+router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
+
+    EventoModel.findOne({ ubicacion: req.body.ubicacion, fechaIni: req.body.fechaIni }, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+                if (err) res.status(500).json(err);
+                else res.status(200).json(recursos);
+            });
+            
+        }
+    });
+});
 
 // Si no ha entrado en ninguna ruta anterior, error 404 not found
 router.all('*', function(req, res) { res.status(404).send("Error 404 not found"); });
