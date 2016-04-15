@@ -15,12 +15,34 @@ var ListaRecursosModel = mongoose.model('ListaRecursosModel');
 
 
  // Obtener lista eventos
-router.get('/listaEventos', function(req, res) {
-    var now = new Date();
-    console.log(now.getDay());
+router.get('/listaEventosComplet', function(req, res) {
+    //var now = new Date();
+    //console.log(now.getDay());
     EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
         if (err) res.status(500).json(err);
         else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON
+    });
+});
+
+router.get('/listaEventos', function(req, res) {
+    //var now = new Date();
+    //console.log(now.getDay());
+    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            var aux = JSON.parse('[]');
+
+            for (var i = 0; i < eventos.length; ++i) {
+                var a = JSON.parse('{}');
+                a["titulo"] = eventos[i].titulo;
+                a["fechaIni"] = eventos[i].fechaIni;
+                a["organizador"] = eventos[i].organizador;
+                a["ubicacion"] = eventos[i].ubicacion;
+                a["_id"] = eventos[i]._id;
+                aux.push(a);
+            }
+            res.status(200).json(aux); //retornamos la lista de los eventos en formato JSON
+        }
     });
 });
 
