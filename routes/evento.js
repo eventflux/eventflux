@@ -20,7 +20,7 @@ router.get('/listaEventos', function(req, res) {
     console.log(now.getDay());
     EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
         if (err) res.status(500).json(err);
-        else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON
+        else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON 
     });
 });
 
@@ -94,18 +94,15 @@ router.post('/newEvent', function(req, res) {
 
 router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     var listaRecursosNueva = req.body;
+    console.log("body->"+req.body);
     if(!listaRecursosNueva.length) res.status(510).json("Debes introducir una lista. Aunque solo haya un recurso por añadir");
-    
-    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
+    else {
+        EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
         if (err) res.status(500).json(err);
         else {
             if (!evento) res.status(404).json("El evento no existe");
             else {
-
-                //peta als fors 
-
-
-                ListaRecursosModel.findOne({_id: {$in: evento.listaRecursos}}, function(err, listaRecursosActual) {
+                ListaRecursosModel.find({_id: {$in: evento.listaRecursos}}, function(err, listaRecursosActual) {
                     if (err) res.status(500).json(err);
                     //recursos tiene la lista de los recursos del evento en cuestion
                     if (listaRecursosActual == null) listaRecursosActual = [];
@@ -122,7 +119,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                         }
                         if (!trobat) {
                             console.log("fem psuh");
-                            console.log("listaRecursosNueva[i]->"+listaRecursosNueva[i]);
+                            console.log("listaRecursosNueva[i]->"+JSON.stringify(listaRecursosNueva[i]));
                             listaRecursosActual.push(listaRecursosNueva[i]);
                         }
                     }
@@ -183,15 +180,15 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
         }
 
     });
+    }
 });
 
 
 router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
-
-    EventoModel.findOne({ ubicacion: req.body.ubicacion, fechaIni: req.body.fechaIni }, function(err, eventos) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
         if (err) res.status(500).json(err);
         else {
-            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+            ListaRecursosModel.find({ eventoID: evento._id }, function(err, recursos) {
                 if (err) res.status(500).json(err);
                 else res.status(200).json(recursos);
             });
