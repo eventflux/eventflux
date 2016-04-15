@@ -209,7 +209,6 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
 
 
 router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
-
     EventoModel.findOne({ ubicacion: req.body.ubicacion, fechaIni: req.body.fechaIni }, function(err, eventos) {
         if (err) res.status(500).json(err);
         else {
@@ -221,6 +220,48 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
         }
     });
 });
+
+router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+                if (err) res.status(500).json(err);
+                else { 
+                    var trobat = false;
+                    for (var i = 0; i < recursos.length && !trobat; ++i ) {
+                        if(recursos[i].nombre == req.body.nombreRecurso ) {
+                            trobat = true;
+                            ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
+                                if(!err) {
+                                  res.status(200).end();
+                                }
+                            });
+                            console.log("borrado");
+                        }
+                    }
+                    res.status(200).json(recursos); 
+                }
+            });
+            
+        }
+    });
+});
+
+/*
+userRouter.delete('/craftworld/:id_craftworld/borrarArma/:id_arma', express_jwt({secret: jwt_secret, requestProperty: 'admin'}), function(req, res, next) {
+  console.log(req.admin);
+  var cwId = req.params.id_craftworld;
+  var aId = req.params.id_arma;
+  if (req.admin.rango != "admin") res.status(200).json("No esta logeado con un usuario con poderes de administrador");
+  else {
+    Arma.remove({_id: new ObjectId(aId)}, function(err){
+    if(!err) {
+      res.status(200).end();
+    }
+  });
+  }
+});*/
 
 // Si no ha entrado en ninguna ruta anterior, error 404 not found
 router.all('*', function(req, res) { res.status(404).send("Error 404 not found"); });
