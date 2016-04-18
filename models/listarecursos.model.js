@@ -8,7 +8,7 @@ module.exports = function() {
 	  	cantidad: Number,
 	  	recompensa: String,
 	  	solicitudes: [{
-	  		idUsuario: {type: Schema.Types.ObjectId, ref: 'EventoModel', default:[]},
+	  		idUsuario: {type: Schema.Types.ObjectId, ref: 'EventoModel'},
 	  		cantidad: Number,
 	  		aceptado: {Boolean, default: false}
 	  	}],
