@@ -94,7 +94,6 @@ router.post('/newEvent', function(req, res) {
 
 router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     var listaRecursosNueva = req.body;
-    console.log("body->"+req.body);
     if(!listaRecursosNueva.length) res.status(510).json("Debes introducir una lista. Aunque solo haya un recurso por añadir");
     else {
         EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
@@ -104,13 +103,15 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
             else {
                 ListaRecursosModel.find({_id: {$in: evento.listaRecursos}}, function(err, listaRecursosActual) {
                     if (err) res.status(500).json(err);
+                    {
                     //recursos tiene la lista de los recursos del evento en cuestion
                     if (listaRecursosActual == null) listaRecursosActual = [];
                     var trobat;
-                    for (var i = 0; i < listaRecursosNueva.length; i++) {
+                    for (var i = 0; i < listaRecursosNueva.length; i++) {                     
                         trobat = false;
                         for (var j = 0; j < listaRecursosActual.length && !trobat; j++) { 
                             if (listaRecursosNueva[i].nombre == listaRecursosActual[j].nombre) {
+                                console.log("entro trobat");
                                 //hay una coincidencia con un nombre, con lo que se modifica automaticamente cantidad y recompensa, para no eliminar las solicitudes
                                 listaRecursosActual[j].cantidad = listaRecursosNueva[i].cantidad;
                                 listaRecursosActual[j].recompensa = listaRecursosNueva[i].recompensa;
@@ -118,19 +119,22 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                             }
                         }
                         if (!trobat) {
-                            console.log("fem psuh");
-                            console.log("listaRecursosNueva[i]->"+JSON.stringify(listaRecursosNueva[i]));
+                            console.log("entro no trobat");
+                            console.log("Que posem?->"+JSON.stringify(listaRecursosNueva[i]));
                             listaRecursosActual.push(listaRecursosNueva[i]);
                         }
                     }
                     //Ahora en listaRecursosActual hay la nueva lista, con lo que tenemos que guardar eso
 
-                    console.log("listaRecursosActual->"+listaRecursosActual);
-                    console.log("listaRecursosNueva[i]->"+listaRecursosNueva.length);
+                    console.log("listaRecursosActual->"+JSON.stringify(listaRecursosActual)+"<-----");
+                    console.log("listaRecursosNueva->"+JSON.stringify(listaRecursosNueva)+"<-----");
+
+                    //hasta ahi todo bien
 
 
                     for (var k = 0; k < listaRecursosActual.length; k++) {
-
+                        console.log("lista->"+JSON.stringify(listaRecursosActual));
+                        console.log("k->"+k);
                         //actualizamos todas los recursos
                         ListaRecursosModel.findOne({_id: listaRecursosActual[k]._id}, function(err, recurso) {
                             if (err) res.status(500).json(err);
@@ -173,6 +177,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                             }
                         });
 
+                    }
                     }
                 });
 
