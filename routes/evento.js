@@ -47,6 +47,28 @@ router.get('/listaEventos', function(req, res) {
     });
 });
 
+router.get('/listaEventos', function(req, res) {
+    //var now = new Date();
+    //console.log(now.getDay());
+    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            var aux = JSON.parse('[]');
+
+            for (var i = 0; i < eventos.length; ++i) {
+                var a = JSON.parse('{}');
+                a["titulo"] = eventos[i].titulo;
+                a["fechaIni"] = eventos[i].fechaIni;
+                a["organizador"] = eventos[i].organizador;
+                a["ubicacion"] = eventos[i].ubicacion;
+                a["_id"] = eventos[i]._id;
+                aux.push(a);
+            }
+            res.status(200).json(aux); //retornamos la lista de los eventos en formato JSON
+        }
+    });
+});
+
 // Obtener evento
 router.get('/consultarEvento/:ubicacion/:fechaIni', function(req, res) { //supondre que se identifica por ubicacion-fecha
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
@@ -217,7 +239,34 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
 
 router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
-        if (err) res.status(500).json(err);
+        if (err) res.status(511).json(err);
+        else {
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+                if (err) res.status(500).json(err);
+                else { 
+                    var trobat = false;
+                    for (var i = 0; i < recursos.length && !trobat; ++i ) {
+                        if(recursos[i].nombre == req.body.nombreRecurso ) {
+                            trobat = true;
+                            ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
+                                if(!err) {
+                                  res.status(200).end();
+                                }
+                            });
+                            console.log("borrado");
+                        }
+                    }
+                    res.status(200).json(recursos); 
+                }
+            });
+
+        }
+    });
+});
+
+router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(511).json(err);
         else {
             ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
                 if (err) res.status(500).json(err);
@@ -257,17 +306,34 @@ userRouter.delete('/craftworld/:id_craftworld/borrarArma/:id_arma', express_jwt(
   }
 });*/
 
+router.post('/confirmarParticipacion/:ubicacion/:fechaIni/:nombreRecurso/:usario', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(511).json(err); 
+        else {
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+                if (err) res.status(500).json(err);
+                else { 
+                //     var trobat = false;
+                //     for (var i = 0; i < recursos.length && !trobat; ++i ) {
+                //         if(recursos[i].nombre == req.body.nombreRecurso ) {
+                //             trobat = true;
+                //             ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
+                //                 if(!err) {
+                //                   res.status(200).end();
+                //                 }
+                //             });
+                //             console.log("borrado");
+                //         }
+                //     }
+                //     res.status(200).json(recursos); 
+                }
+            });
+        }
+    });
+});
+
+
 // Si no ha entrado en ninguna ruta anterior, error 404 not found
 router.all('*', function(req, res) { res.status(404).send("Error 404 not found"); });
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
