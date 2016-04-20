@@ -156,16 +156,17 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
             for(var i = 0; i<req.body.recursos.length; ++i) {
                 //do something with e.g. req.body[key]
                 var rec = req.body.recursos[i];
-                console.log("rec->", JSON.parse(JSON.stringify(rec)));
+                //console.log("rec->", JSON.parse(JSON.stringify(rec)));
+                rec.eventoID = evento._id;
                 var listaRecursosInstance = new ListaRecursosModel(rec);
-                console.log("rec2->"+listaRecursosInstance);
-                console.log('flor', JSON.parse(JSON.stringify(listaRecursosInstance)))
+                //console.log("rec2->"+listaRecursosInstance);
+                //console.log('flor', JSON.parse(JSON.stringify(listaRecursosInstance)))
                 listaRecursosInstance.save(function(err, newRecurso) {
                     if (err) {
                         res.status(500).send(err);
                     } else {
                         console.log("newrecurso->"+JSON.stringify(newRecurso));
-                        var query = { ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni};
+                        var query = { _id: evento._id};
                         console.log(newRecurso._id);
                         var update = { $push: { listaRecursos: newRecurso._id } };
 
@@ -173,6 +174,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                         // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
                         // Si no lo ponemos por defecto nos pone el viejo
                         var options = { 'new': true };
+                        console.log("heyhey");
 
                         EventoModel.findOneAndUpdate(query, update, options, function(err, updated) {
                             if (err) {
@@ -180,6 +182,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                             }
                             else {
                                 //res.status(200).json(updated);
+                                console.log(updated);
                             }
                         });
                     }

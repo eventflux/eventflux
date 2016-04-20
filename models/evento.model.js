@@ -13,7 +13,7 @@ module.exports = function() {
   	organizador: {type: String, required: true}, //en principio solo tiene un organizador cada evento
   	ubicacion: {type: String, required: true},
     foto: String,
-    listaRecursos: {type: Schema.Types.ObjectId, ref: 'ListaRecursosModel', default:[]}
+    listaRecursos: [{type: Schema.Types.ObjectId, ref: 'ListaRecursosModel', default:[]}]
   });
 
   eventoModelSchema.index({ ubicacion: 1, fechaIni: 1}, { unique: true });
