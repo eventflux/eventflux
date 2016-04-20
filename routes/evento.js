@@ -321,15 +321,16 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
 });
 */
 
-
 router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
         if (err) res.status(500).json(err);
         else {
             console.log("EVENTO: \n" + evento);
-            ListaRecursosModel.find({ eventoID: evento._id }, function(err, recursos) {
-                if (err) res.status(500).json(err);
+            console.log("eeeeee: " + evento._id);
+            ListaRecursosModel.find({ eventoID: evento._id }, function(errr, recursos) {
+                if (errr) res.status(500).json(errr);
                 else {
+                    console.log(recursos);
                     res.status(200).json(recursos);
                 }
             });
