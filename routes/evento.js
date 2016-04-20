@@ -338,26 +338,19 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
     });
 });
 
-router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req, res) {
+router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err);
         else {
-            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+            ListaRecursosModel.findOne({ eventoID: eventos._id, nombre: req.params.nombre }, function(err, recurso) {
                 if (err) res.status(500).json(err);
                 else { 
-                    var trobat = false;
-                    for (var i = 0; i < recursos.length && !trobat; ++i ) {
-                        if(recursos[i].nombre == req.body.nombreRecurso ) {
-                            trobat = true;
-                            ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
-                                if(!err) {
-                                  res.status(200).end();
-                                }
-                            });
-                            console.log("borrado");
+                    ListaRecursosModel.remove({ _id: recurso._id }, function(err){
+                        if(!err) {
+                          res.status(200).end();
                         }
-                    }
-                    res.status(200).json(recursos); 
+                    });
+                    res.status(200).json(recurso); 
                 }
             });
 
