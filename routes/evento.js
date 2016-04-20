@@ -182,7 +182,7 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                             }
                             else {
                                 //res.status(200).json(updated);
-                                console.log(updated);
+                                 
                             }
                         });
                     }
