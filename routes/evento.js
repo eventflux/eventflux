@@ -182,7 +182,6 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
                             }
                             else {
                                 //res.status(200).json(updated);
-                                 
                             }
                         });
                     }
@@ -327,39 +326,13 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
         else {
             console.log("EVENTO: \n" + evento);
             console.log("eeeeee: " + evento._id);
-            ListaRecursosModel.find({ eventoID: evento._id }, function(errr, recursos) {
+            ListaRecursosModel.find({/* eventoID: evento._id */}, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
                     console.log(recursos);
                     res.status(200).json(recursos);
                 }
             });
-        }
-    });
-});
-
-router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req, res) {
-    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
-        if (err) res.status(511).json(err);
-        else {
-            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
-                if (err) res.status(500).json(err);
-                else { 
-                    var trobat = false;
-                    for (var i = 0; i < recursos.length && !trobat; ++i ) {
-                        if(recursos[i].nombre == req.body.nombreRecurso ) {
-                            trobat = true;
-                            ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
-                                if(!err) {
-                                  res.status(200).end();
-                                }
-                            });
-                            console.log("borrado");
-                        }
-                    }
-                    res.status(200).json(recursos); 
-                }
-            });
 
         }
     });
@@ -387,10 +360,12 @@ router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombreRecurso', function(req
                     res.status(200).json(recursos); 
                 }
             });
-            
+
         }
     });
 });
+
+
 
 
 router.post('/confirmarParticipacion/:ubicacion/:fechaIni/:nombreRecurso/:usario', function(req, res) {
