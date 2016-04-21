@@ -356,32 +356,52 @@ router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) 
     });
 });
 
-router.post('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:idUsario/:cantidad', function(req, res) {
+router.get('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:idUsuario/:cantidad', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err); 
         else {
-            console.log(eventos);
+            
             ListaRecursosModel.findOne({ eventoID: eventos._id, nombre: req.params.nombreRecurso }, function(err, recurso) {
                 if (err) res.status(500).json(err);
                 else { 
-                    var query = { _id: recurso._id};
-                    //console.log(newRecurso._id);
-                    var auxJson = " {\"idUsuario\": \"" + req.params.idUsario +"\", \"cantidad\": \""+ req.params.cantidad +"\", \"aceptado\": \"false\" }";
-                    auxJson = JSON.parse(JSON.stringify(auxJson));
-                    console.log("->",auxJson,"<-");
-                    var update = { $push: { solicitudes: auxJson } };
-                    console.log("update->", update, "<-");
+                    var query = { _id: recurso._id };
+                    
+                    var idU = ""+req.params.idUsuario;
+                    
+                
+                    var update = { $push: { "solicitudes": { "$each": [ { "idUsuario": idU , "cantidad": req.params.cantidad } ] } } };
+                
                     var options = { 'new': true };
                     ListaRecursosModel.findOneAndUpdate(query, update, options, function(err, updated) {
                         if (err) {
                             res.status(500).json(err);
                         }
                         else {
-                            //res.status(200).json(updated);
-                            console.log("updated2->", updated, "<-");
+                           
                             res.status(200).json(updated);
                         }
                     });
+                }
+            });
+        }
+    });
+});
+
+router.get('/confirmarParticipante/:ubicacion/:fechaIni/:nombreRecurso/:idSolicitud', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(511).json(err); 
+        else {
+            
+            ListaRecursosModel.findOne({ eventoID: eventos._id, nombre: req.params.nombreRecurso }, function(err, recurso) {
+                if (err) res.status(500).json(err);
+                else { 
+                    var query = { _id: recurso._id };
+
+                    for (var i = 0; i < recurso.solicitudes.length; ++i) {
+                        console.log(recurso.solicitudes[i].idUsuario);
+                    }
+                    console.log(recurso.solicitudes.length);               
+                    res.status(200).json("yas");
                 }
             });
         }
