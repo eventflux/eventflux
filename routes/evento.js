@@ -324,12 +324,10 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
         if (err) res.status(500).json(err);
         else {
-            console.log("EVENTO: \n" + evento);
-            console.log("eeeeee: " + evento._id);
             ListaRecursosModel.find({/* eventoID: evento._id */}, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
-                    console.log(recursos);
+                
                     res.status(200).json(recursos);
                 }
             });
@@ -358,29 +356,32 @@ router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) 
     });
 });
 
-router.post('/confirmarParticipacion/:ubicacion/:fechaIni/:nombreRecurso/:usario', function(req, res) {
+router.post('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:idUsario/:cantidad', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err); 
         else {
-            ListaRecursosModel.find({ eventoID: eventos._id }, function(err, recursos) {
+            console.log(eventos);
+            ListaRecursosModel.findOne({ eventoID: eventos._id, nombre: req.params.nombreRecurso }, function(err, recurso) {
                 if (err) res.status(500).json(err);
                 else { 
-                    var trobat = false;
-                    for (var i = 0; i < recursos.length && !trobat; ++i ) {
-                        if(recursos[i].nombre == req.body.nombreRecurso ) {
-                            trobat = true;
-                            console.log( recursos[i].solicitudes );
-                            
-                //             ListaRecursosModel.remove({ _id: new ObjectId(recursos[i]._id )}, function(err){
-                //                 if(!err) {
-                //                   res.status(200).end();
-                //                 }
-                //             });
-                //             console.log("borrado");
-                //         }
+                    var query = { _id: recurso._id};
+                    //console.log(newRecurso._id);
+                    var auxJson = " {\"idUsuario\": \"" + req.params.idUsario +"\", \"cantidad\": \""+ req.params.cantidad +"\", \"aceptado\": \"false\" }";
+                    auxJson = JSON.parse(JSON.stringify(auxJson));
+                    console.log("->",auxJson,"<-");
+                    var update = { $push: { solicitudes: auxJson } };
+                    console.log("update->", update, "<-");
+                    var options = { 'new': true };
+                    ListaRecursosModel.findOneAndUpdate(query, update, options, function(err, updated) {
+                        if (err) {
+                            res.status(500).json(err);
                         }
-                //     res.status(200).json(recursos); 
-                    }
+                        else {
+                            //res.status(200).json(updated);
+                            console.log("updated2->", updated, "<-");
+                            res.status(200).json(updated);
+                        }
+                    });
                 }
             });
         }
