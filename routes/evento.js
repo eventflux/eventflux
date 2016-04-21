@@ -197,7 +197,7 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(500).json(err);
         else {
-            console.log(eventos._id)
+            
             ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
@@ -265,17 +265,48 @@ router.get('/confirmarParticipante/:ubicacion/:fechaIni/:nombreRecurso/:idSolici
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err); 
         else {
-            
             ListaRecursosModel.findOne({ eventoID: eventos._id, nombre: req.params.nombreRecurso }, function(err, recurso) {
                 if (err) res.status(500).json(err);
                 else { 
-                    var query = { _id: recurso._id };
+                    
+                    for (var i = 0; i < recurso.solicitudes.length; i++) {
+                        var solJ = JSON.parse(JSON.stringify(recurso.solicitudes[i]) );
+                        if( solJ._id == req.params.idSolicitud ){
+                            var idS = ""+solJ._id;
+                            var cantidad = ""+solJ.cantidad;
 
-                    for (var i = 0; i < recurso.solicitudes.length; ++i) {
-                        console.log(i+recurso.solicitudes[i]);
-                    }
-                    console.log(recurso.solicitudes.length);               
-                    res.status(200).json("yas");
+                            var query = { _id: recurso._id };
+                            var update = { $pull: { "solicitudes":  { "_id": idS  } } };
+                            //var update = { $push: { "solicitudes": { "$each": [ { "aceptado": "true" } ] } } };
+                            var options = { 'new': true };
+                            ListaRecursosModel.findOneAndUpdate(query, update, options, function(err, updated) {
+                                if (err) {
+                                    res.status(500).json(err);
+                                }
+                                else {
+                                    //res.status(200).json(updated);
+                                }
+                            });
+
+                            var idU = ""+solJ.idUsuario;
+                            var cantidad = ""+solJ.cantidad;
+
+                            var query = { _id: recurso._id };
+                            //var update = { $push: { "solicitudes":  { "_id": idS  } } };
+                            var update = { $push: { "solicitudes": { "$each": [ { "idUsuario": idU , "cantidad": cantidad, "aceptado": "true" } ] } } };
+                            var options = { 'new': true };
+                            ListaRecursosModel.findOneAndUpdate(query, update, options, function(err, updated) {
+                                if (err) {
+                                    res.status(500).json(err);
+                                }
+                                else {
+                                    res.status(200).json(updated);
+                                }
+                            });
+
+                        }                       
+                    }             
+                    //res.status(520).json(recurso);
                 }
             });
         }
