@@ -189,142 +189,16 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
             }
             res.status(200).json("correcte");
         }
-
-            /*for (var k = 0; k < req.body.length; ++k) {
-                var aux = req.body[k];
-                console.log("aux->"+JSON.stringify(aux));
-                var listaRecursosInstance = new ListaRecursosModel(req.body[k]);
-                listaRecursosInstance.save(function(err, newRecurso) {
-                    if (err) {
-                        res.status(500).send(err);
-                    } else {
-                        console.log("newrecurso->"+newRecurso);
-                        var query = { ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni};
-                        console.log(newRecurso._id);
-                        var update = { $push: { listaRecursos: newRecurso._id } };
-
-                        // Indica que queremos que el objeto que nos devuelva la callback (updated)
-                        // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
-                        // Si no lo ponemos por defecto nos pone el viejo
-                        var options = { 'new': true };
-
-                        EventoModel.findOneAndUpdate(query, update, options, function(err, updated) {
-                            if (err) {
-                                res.status(500).json(err);
-                            }
-                            else {
-                                //res.status(200).json(updated);
-                            }
-                        });
-                    }
-                });
-            }
-            res.status(200).json("correcte");
-        }*/
     });
 });
 
 
-/*
-router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
-    var listaRecursosNueva = req.body;
-    if(!listaRecursosNueva.length) res.status(510).json("Debes introducir una lista. Aunque solo haya un recurso por añadir");
-    else {
-        EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni}, function(err, evento) {
-            if (err) res.status(500).json(err);
-            else {
-                if (!evento) res.status(404).json("El evento no existe");
-                else {
-                    ListaRecursosModel.find({_id: {$in: evento.listaRecursos}}, function(err, listaRecursosActual) {
-                        if (err) res.status(500).json(err);
-                        else {
-                            //recursos tiene la lista de los recursos del evento en cuestion
-                            //if (listaRecursosActual == null) listaRecursosActual = [];
-                            var trobat;
-                            for (var i = 0; i < listaRecursosNueva.length; i++) {                     
-                                trobat = false;
-                                for (var j = 0; j < listaRecursosActual.length && !trobat; j++) { 
-                                    if (listaRecursosNueva[i].nombre == listaRecursosActual[j].nombre) {
-                                        //console.log("entro trobat");
-                                        //hay una coincidencia con un nombre, con lo que se modifica automaticamente cantidad y recompensa, para no eliminar las solicitudes
-                                        listaRecursosActual[j].cantidad = listaRecursosNueva[i].cantidad;
-                                        listaRecursosActual[j].recompensa = listaRecursosNueva[i].recompensa;
-                                        trobat = true;
-                                    }
-                                }
-                                if (!trobat) {
-                                    //console.log("entro no trobat");
-                                    //console.log("Que posem?->"+JSON.stringify(listaRecursosNueva[i]));
-                                    //no s'ha trobat, per lo que hem de crear el recurs a la bd
-                                    console.log(listaRecursosNueva);
-                                    console.log(listaRecursosNueva[0]);
-                                    var s = ""+listaRecursosNueva[i];
-                                    listaRecursosActual.push(listaRecursosNueva[i]);
-
-                                }
-                            }
-                            //Ahora en listaRecursosActual hay la nueva lista, con lo que tenemos que guardar eso
-
-                            //console.log("listaRecursosActual->"+JSON.stringify(listaRecursosActual)+"<-----");
-                            //console.log("listaRecursosNueva->"+JSON.stringify(listaRecursosNueva)+"<-----");
-
-                            //hasta ahi todo bien
-                            for (var k = 0; k < listaRecursosActual.length; k++) {
-                                console.log("k->"+k+"<-----");
-                                //actualizamos todas los recursos
-                                if (!listaRecursosActual[k]._id) {
-                                    console.log("listRec de k->"+JSON.stringify(listaRecursosActual[k])+"<-");
-                                    //creamos el recurso
-                                    var recursoInstance = new ListaRecursosModel(listaRecursosActual[k]);
-                                    console.log("recinsta->"+JSON.stringify(recursoInstance));
-                                    recursoInstance.save(function(err, newRecurso) {
-                                        if (err) res.status(500).send(err);
-                                        else {
-                                            //hemos crado un recurso que ahora tiene que añadirse a la lista de recursos del evento
-                                            console.log("newRecueso->"+newRecurso);
-                                            var query = {ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni};
-                                            var update = { $push: { listaRecursos: newRecurso._id } };
-
-                                            // Indica que queremos que el objeto que nos devuelva la callback (updated)
-                                            // sea el nuevo (después de haberle aplicado la actualización) y no el viejo
-                                            // Si no lo ponemos por defecto nos pone el viejo
-                                            var options = { 'new': true };
-
-                                            EventoModel.findOneAndUpdate(query, update, options, function(err, updated) {
-                                                if (err) {
-                                                    res.status(500).json(err);
-                                                }
-                                                else {
-                                                    res.status(200).json(updated);
-                                                }
-                                            });
-                                        }
-
-                                    });
-                                } else {
-                                    //aqui simplement s'ha d'actulitzar, ja que si el te
-                                    //modificamos el recurso
-                                    ListaRecursosModel.update({_id: recurso._id}, {$set: listaRecursosActual[k]}, function(err) {
-                                        if(!err) {
-                                            res.status(200).end();
-                                        }
-                                     });
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-});
-*/
-
 router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
-    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(500).json(err);
         else {
-            ListaRecursosModel.find({/* eventoID: evento._id */}, function(errr, recursos) {
+            console.log(eventos._id)
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
                 
@@ -398,7 +272,7 @@ router.get('/confirmarParticipante/:ubicacion/:fechaIni/:nombreRecurso/:idSolici
                     var query = { _id: recurso._id };
 
                     for (var i = 0; i < recurso.solicitudes.length; ++i) {
-                        console.log(recurso.solicitudes[i].idUsuario);
+                        console.log(i+recurso.solicitudes[i]);
                     }
                     console.log(recurso.solicitudes.length);               
                     res.status(200).json("yas");
