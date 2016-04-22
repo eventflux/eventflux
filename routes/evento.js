@@ -1,4 +1,4 @@
-xvar mongoose = require('mongoose');
+var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var express_jwt = require('express-jwt');
 var config = require('../config');
@@ -17,15 +17,18 @@ var ListaRecursosModel = mongoose.model('ListaRecursosModel');
 router.get('/listaEventosCompletConRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
         if (err) res.status(500).json(err);
-        else {
-            ListaRecursosModel.find({ _id: {$in: eventos.listaRecursos} }, function(err, recursos) {
+        else if (evento) {
+            ListaRecursosModel.find({ _id: {$in: evento.listaRecursos} }, function(err, recursos) {
                 if (err) res.status(500).json(err);
                 else {
-                    evento.recursos = recursos;
-                    res.status(200).json(evento);//devolvemos toda la info de las agendas que tiene el usuario
+                    var aux = JSON.parse('{}');
+                    aux["evento"] = evento;
+                    aux["recursos"] = recursos;
+                    res.status(200).json(aux);//devolvemos toda la info de las agendas que tiene el usuario
                 }
             });
         } //retornamos la lista de los eventos en formato JSON 
+        else res.status(404).json("No existe el evento");
     });
 });
 
@@ -55,6 +58,13 @@ router.get('/listaRecursosComplet', function(req, res) {
     });
 });
 
+router.get('/listaEventosComplet', function(req, res) {
+
+    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON 
+    });
+});
 
 router.get('/listaEventos', function(req, res) {
     EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
@@ -77,27 +87,6 @@ router.get('/listaEventos', function(req, res) {
     });
 });
 
-router.get('/listaEventos', function(req, res) {
-    //var now = new Date();
-    //console.log(now.getDay());
-    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
-        if (err) res.status(500).json(err);
-        else {
-            var aux = JSON.parse('[]');
-
-            for (var i = 0; i < eventos.length; ++i) {
-                var a = JSON.parse('{}');
-                a["titulo"] = eventos[i].titulo;
-                a["fechaIni"] = eventos[i].fechaIni;
-                a["organizador"] = eventos[i].organizador;
-                a["ubicacion"] = eventos[i].ubicacion;
-                a["_id"] = eventos[i]._id;
-                aux.push(a);
-            }
-            res.status(200).json(aux); //retornamos la lista de los eventos en formato JSON
-        }
-    });
-});
 
 // Obtener evento
 router.get('/consultarEvento/:ubicacion/:fechaIni', function(req, res) { //supondre que se identifica por ubicacion-fecha
