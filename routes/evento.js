@@ -13,6 +13,22 @@ var UsuarioModel = mongoose.model('UsuarioModel');
 var ListaRecursosModel = mongoose.model('ListaRecursosModel');
 
 
+ // Obtener lista eventos
+router.get('/listaEventosCompletConRecursos/:ubicacion/:fechaIni', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
+        if (err) res.status(500).json(err);
+        else {
+            ListaRecursosModel.find({ _id: {$in: eventos.listaRecursos} }, function(err, recursos) {
+                if (err) res.status(500).json(err);
+                else {
+                    evento.recursos = recursos;
+                    res.status(200).json(evento);//devolvemos toda la info de las agendas que tiene el usuario
+                }
+            });
+        } //retornamos la lista de los eventos en formato JSON 
+    });
+});
+
 router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(500).json(err);
@@ -21,7 +37,6 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
             ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
-                
                     res.status(200).json(recursos);
                 }
             });
@@ -208,7 +223,6 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
         }
     });
 });
-
 
 router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
