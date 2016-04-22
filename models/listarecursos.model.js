@@ -9,7 +9,7 @@ module.exports = function() {
 	  	solicitudes: [{
 	  		idUsuario: {type: Schema.Types.ObjectId, ref: 'UsuarioModel'},
 	  		cantidad: Number,
-	  		aceptado: {Boolean, default: false}
+	  		aceptado: Boolean
 	  	}],
 	  	eventoID: {type: Schema.Types.ObjectId, ref: 'EventoModel'}
   	});
