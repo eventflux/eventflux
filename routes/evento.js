@@ -131,6 +131,12 @@ router.post('/newEvent', function(req, res) {
                 trobat = true;
             } 
         }
+        
+        for (var i = 0; i < eventos.length && !trobat; ++i) {
+            if (eventos[i].fechaIni == fIni) {
+                trobat = true;
+            } 
+        }
         if (trobat) res.status(514).json("Ya existe un evento con esta ubicacion y fecha");
         else {
             var eventoInstance = new EventoModel(req.body);
