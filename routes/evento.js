@@ -119,8 +119,15 @@ router.post('/newEvent', function(req, res) {
         if (err) res.status(600).json(err);
         var fIni = req.body.fechaIni;
         var trobat = false;
+        /*
         for (var i = 0; i < eventos.length && !trobat; ++i) {
-            if (eventos[i].fechaIni <= fIni <= eventos[i].fechaFin){
+            if (eventos[i].fechaIni.equals(fIni) <= fIni <= eventos[i].fechaFin){
+                trobat = true;
+            } 
+        }
+        */
+        for (var i = 0; i < eventos.length && !trobat; ++i) {
+            if (eventos[i].fechaIni == fIni) {
                 trobat = true;
             } 
         }
