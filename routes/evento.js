@@ -21,7 +21,6 @@ router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
             ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
                 if (errr) res.status(500).json(errr);
                 else {
-                
                     res.status(200).json(recursos);
                 }
             });
