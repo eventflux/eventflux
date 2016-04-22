@@ -55,15 +55,6 @@ router.get('/listaRecursosComplet', function(req, res) {
     });
 });
 
- // Obtener lista eventos
-router.get('/listaEventosComplet', function(req, res) {
-    //var now = new Date();
-    //console.log(now.getDay());
-    EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
-        if (err) res.status(500).json(err);
-        else res.status(200).json(eventos); //retornamos la lista de los eventos en formato JSON 
-    });
-});
 
 router.get('/listaEventos', function(req, res) {
     EventoModel.find({/*aqui no ponemos ninguna condicion ya que los queremos todos*/}, function(err, eventos) {
@@ -149,7 +140,7 @@ router.post('/newEvent', function(req, res) {
             var eventoInstance = new EventoModel(req.body);
             eventoInstance.organizador = req.user.email;
             eventoInstance.save(function(err, newEvento) {
-                if (err) {
+              if (err) {
                     res.status(601).send(err);
                 } else {
                     var query = {email: req.user.email};
