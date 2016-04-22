@@ -13,6 +13,22 @@ var UsuarioModel = mongoose.model('UsuarioModel');
 var ListaRecursosModel = mongoose.model('ListaRecursosModel');
 
 
+router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
+                if (errr) res.status(500).json(errr);
+                else {
+                    res.status(200).json(recursos);
+                }
+            });
+
+        }
+    });
+});
+
  // Obtener lista eventos
 router.get('/listaEventosCompletConRecursos/:ubicacion/:fechaIni', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, evento) {
