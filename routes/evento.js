@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+xvar mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var express_jwt = require('express-jwt');
 var config = require('../config');
@@ -12,6 +12,23 @@ var EventoModel = mongoose.model('EventoModel');
 var UsuarioModel = mongoose.model('UsuarioModel');
 var ListaRecursosModel = mongoose.model('ListaRecursosModel');
 
+
+router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
+    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            
+            ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
+                if (errr) res.status(500).json(errr);
+                else {
+                
+                    res.status(200).json(recursos);
+                }
+            });
+
+        }
+    });
+});
 
  // Obtener lista eventos
 router.get('/listaRecursosComplet', function(req, res) {
@@ -104,7 +121,7 @@ router.post('/newEvent', function(req, res) {
     */
 
     EventoModel.find({ ubicacion: req.body.ubicacion}, function(err, eventos) {
-        if (err) res.status(500).json(err);
+        if (err) res.status(600).json(err);
         var fIni = req.body.fechaIni;
         var trobat = false;
         for (var i = 0; i < eventos.length && !trobat; ++i) {
@@ -118,7 +135,7 @@ router.post('/newEvent', function(req, res) {
             eventoInstance.organizador = req.user.email;
             eventoInstance.save(function(err, newEvento) {
                 if (err) {
-                    res.status(500).send(err);
+                    res.status(601).send(err);
                 } else {
                     var query = {email: req.user.email};
                     var update = { $push: { eventos: newEvento._id } };
@@ -130,7 +147,7 @@ router.post('/newEvent', function(req, res) {
 
                     UsuarioModel.findOneAndUpdate(query, update, options, function(err, updated) {
                         if (err) {
-                            res.status(500).json(err);
+                            res.status(601).json(err);
                         }
                         else {
                             res.status(200).json(updated);
@@ -192,23 +209,6 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     });
 });
 
-
-router.get('/listaRecursos/:ubicacion/:fechaIni', function(req, res) {
-    EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
-        if (err) res.status(500).json(err);
-        else {
-            
-            ListaRecursosModel.find({ eventoID: eventos._id }, function(errr, recursos) {
-                if (errr) res.status(500).json(errr);
-                else {
-                
-                    res.status(200).json(recursos);
-                }
-            });
-
-        }
-    });
-});
 
 router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
