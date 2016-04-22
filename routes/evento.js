@@ -209,7 +209,6 @@ router.post('/anadirRecursos/:ubicacion/:fechaIni', function(req, res) {
     });
 });
 
-
 router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) {
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err);
