@@ -131,7 +131,13 @@ router.post('/newEvent', function(req, res) {
                 trobat = true;
             } 
         }
-        if (trobat) res.status(404).json("Ya existe un evento con esta ubicacion y fecha");
+        
+        for (var i = 0; i < eventos.length && !trobat; ++i) {
+            if (eventos[i].fechaIni == fIni) {
+                trobat = true;
+            } 
+        }
+        if (trobat) res.status(514).json("Ya existe un evento con esta ubicacion y fecha");
         else {
             var eventoInstance = new EventoModel(req.body);
             eventoInstance.organizador = req.user.email;
@@ -231,7 +237,8 @@ router.delete('/borrarRecurso/:ubicacion/:fechaIni/:nombre', function(req, res) 
     });
 });
 
-router.get('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:idUsuario/:cantidad', function(req, res) {
+router.get('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:cantidad', function(req, res) {
+
     EventoModel.findOne({ ubicacion: req.params.ubicacion, fechaIni: req.params.fechaIni }, function(err, eventos) {
         if (err) res.status(511).json(err); 
         else {
@@ -241,10 +248,10 @@ router.get('/participarRecurso/:ubicacion/:fechaIni/:nombreRecurso/:idUsuario/:c
                 else { 
                     var query = { _id: recurso._id };
                     
-                    var idU = ""+req.params.idUsuario;
+                    var idU = ""+req.user.email;
                     
                 
-                    var update = { $push: { "solicitudes": { "$each": [ { "idUsuario": idU , "cantidad": req.params.cantidad } ] } } };
+                    var update = { $push: { "solicitudes": { "$each": [ { "email": idU , "cantidad": req.params.cantidad } ] } } };
                 
                     var options = { 'new': true };
                     ListaRecursosModel.findOneAndUpdate(query, update, options, function(err, updated) {
