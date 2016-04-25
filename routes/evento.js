@@ -87,6 +87,27 @@ router.get('/listaEventos', function(req, res) {
     });
 });
 
+router.get('/listaEventos/:ubicacion', function(req, res) {
+    EventoModel.find({ ubicacion: req.params.ubicacion }, function(err, eventos) {
+        if (err) res.status(500).json(err);
+        else {
+            console.log(eventos);
+            var aux = JSON.parse('[]');
+
+            for (var i = 0; i < eventos.length; ++i) {
+                var a = JSON.parse('{}');
+                a["titulo"] = eventos[i].titulo;
+                a["fechaIni"] = eventos[i].fechaIni;
+                a["organizador"] = eventos[i].organizador;
+                a["ubicacion"] = eventos[i].ubicacion;
+                a["_id"] = eventos[i]._id;
+                aux.push(a);
+            }
+            res.status(200).json(aux); //retornamos la lista de los eventos en formato JSON
+        }
+    });
+});
+
 
 // Obtener evento
 router.get('/consultarEvento/:ubicacion/:fechaIni', function(req, res) { //supondre que se identifica por ubicacion-fecha
@@ -320,6 +341,8 @@ router.get('/confirmarParticipante/:ubicacion/:fechaIni/:nombreRecurso/:idSolici
         }
     });
 });
+
+
 
 // Si no ha entrado en ninguna ruta anterior, error 404 not found
 router.all('*', function(req, res) { res.status(404).send("Error 404 not found"); });

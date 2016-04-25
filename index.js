@@ -43,11 +43,13 @@ app.use(bodyParser.json());
 var registerRouter = require('./routes/register');
 var loginRouter = require('./routes/login');
 var eventoRouter = require('./routes/evento');
+var usuarioRouter = require('./routes/usuario');
 
 // Y los usamos para los caminos que toquen
 app.use('/register',  registerRouter);
 app.use('/login',  loginRouter);
 app.use('/evento',  eventoRouter);
+app.use('/usuario',  usuarioRouter);
 
 var theport = process.env.PORT || 8080;
 
